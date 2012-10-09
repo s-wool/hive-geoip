@@ -1,4 +1,4 @@
-package com.jointhegrid.udf.geoip;
+package com.mozilla.hive.udf.geoip;
 
 import com.maxmind.geoip.LookupService;
 import com.maxmind.geoip.Location;

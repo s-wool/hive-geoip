@@ -1,117 +1,215 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.m6d</groupId>
-  <artifactId>hive-geoip</artifactId>
-  <name>hive-geoip</name>
-  <version>1.0.0-SNAPSHOT</version>
-  <description>GeoIP in hive</description>
-  <packaging>jar</packaging>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-  <properties></properties>
-  <dependencies>
+	<groupId>com.mozilla</groupId>
+	<artifactId>hive-geoip</artifactId>
+	<version>0.1-SNAPSHOT</version>
 
-    <dependency>
-      <groupId>org.kohsuke</groupId>
-      <artifactId>geoip</artifactId>
-      <version>1.2.5</version>
-    </dependency>
+	<name>hive-geoip</name>
+	<description>GeoIP UDF for Hive</description>
+	<url>https://github.com/mozilla-metrics/hive-geoip</url>
 
-    <dependency>
-      <groupId>com.jointhegrid</groupId>
-      <artifactId>hive_test</artifactId>
-      <version>4.0.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.hadoop</groupId>
-      <artifactId>hadoop-core</artifactId>
-      <version>0.20.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.hadoop</groupId>
-      <artifactId>hadoop-test</artifactId>
-      <version>0.20.2</version>
-    </dependency>
+	<licenses>
+		<license>
+			<name>Apache 2</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
 
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.7</version>
-      <scope>test</scope>
-    </dependency>
+	<scm>
+		<connection>scm:git:git@github.com:mozilla-metrics/hive-geoip.git</connection>
+		<url>git@github.com:mozilla-metrics/hive-geoip.git</url>
+	</scm>
 
-  </dependencies>
+	<packaging>jar</packaging>
 
-  <build>
-    <pluginManagement>
-      <plugins>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<skip.tests>false</skip.tests>
+	</properties>
 
-        <plugin>
-          <configuration>
-            <serverId>apache-main</serverId>
-            <url>http://www.apache.org/dist/hadoop/common/hadoop-0.20.2</url>
-            <fromFile>hadoop-0.20.2.tar.gz</fromFile>
-            <toDir>${project.build.directory}/hadoop</toDir>
-          </configuration>
+	<repositories>
+		<repository>
+	      <id>mozilla-metrics-releases</id>
+	      <url>http://mozilla-metrics.github.com/maven2/releases</url>
+	    </repository>
+		<repository>
+			<id>mozilla-metrics-snapshots</id>
+			<url>http://mozilla-metrics.github.com/maven2/snapshots</url>
+		</repository>
+		<repository>
+			<id>cdh.release.repo</id>
+			<url>https://repository.cloudera.com/content/repositories/releases</url>
+			<name>Cloudera Releases Repository</name>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>oss.sonatype.org</id>
+			<url>http://oss.sonatype.org/content/repositories/releases</url>
+			<name>Sonatype's OSS Maven Repository</name>
+		</repository>
+	</repositories>
 
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>wagon-maven-plugin</artifactId>
-          <version>1.0-beta-3</version>
-          <executions>
-            <execution>
-              <id>download-hadoop</id>
-              <phase>pre-integration-test</phase>
-              <goals>
-                <goal>download-single</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
+	<dependencies>
 
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>exec-maven-plugin</artifactId>
-          <version>1.2.1</version>
-          <configuration>
-            <executable>tar</executable>
-            <arguments>
-              <argument>-xf</argument>
-              <argument>${project.build.directory}/hadoop/hadoop-0.20.2.tar.gz</argument>
-              <argument>-C</argument>
-              <argument>${project.build.directory}</argument>
-            </arguments>
-          </configuration>
-        </plugin>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.2</version>
+			<scope>test</scope>
+		</dependency>
 
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.16</version>
+		</dependency>
 
+		<!-- Cloudera Hadoop, HBase -->
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-core</artifactId>
+			<version>0.20.2-cdh3u4</version>
+			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>jasper-runtime</artifactId>
+					<groupId>tomcat</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>commons-httpclient</artifactId>
+					<groupId>commons-httpclient</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>hsqldb</artifactId>
+					<groupId>hsqldb</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>commons-cli</artifactId>
+					<groupId>commons-cli</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>commons-logging</artifactId>
+					<groupId>commons-logging</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jsp-api</artifactId>
+					<groupId>javax.servlet</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>hadoop-ant</artifactId>
+					<groupId>com.cloudera.cdh</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>commons-net</artifactId>
+					<groupId>commons-net</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jasper-compiler</artifactId>
+					<groupId>tomcat</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>commons-el</artifactId>
+					<groupId>commons-el</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>ant</artifactId>
+					<groupId>ant</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jets3t</artifactId>
+					<groupId>net.java.dev.jets3t</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>xmlenc</artifactId>
+					<groupId>xmlenc</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>core</artifactId>
+					<groupId>org.eclipse.jdt</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>commons-codec</artifactId>
+					<groupId>commons-codec</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>oro</artifactId>
+					<groupId>oro</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jsp-api</artifactId>
+					<groupId>javax.servlet.jsp</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jetty-util</artifactId>
+					<groupId>org.mortbay.jetty</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jetty</artifactId>
+					<groupId>org.mortbay.jetty</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>servlet-api</artifactId>
+					<groupId>javax.servlet</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<!-- GeoIP -->
+		<dependency>
+			<groupId>com.maxmind</groupId>
+			<artifactId>maxmind-geoip</artifactId>
+			<version>1.2.5</version>
+		</dependency>
 
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-eclipse-plugin</artifactId>
-          <version>2.5.1</version>
-          <configuration>
-            <projectNameTemplate>[artifactId]</projectNameTemplate>
-            <wtpmanifest>true</wtpmanifest>
-            <wtpapplicationxml>true</wtpapplicationxml>
-            <wtpversion>1.5</wtpversion>
-            <additionalBuildcommands>
-              <buildcommand>org.eclipse.jdt.core.javabuilder</buildcommand>
-              <buildcommand>org.maven.ide.eclipse.maven2Builder</buildcommand>
-            </additionalBuildcommands>
-            <additionalProjectnatures>
-              <projectnature>org.eclipse.jdt.core.javanature</projectnature>
-              <projectnature>org.maven.ide.eclipse.maven2Nature</projectnature>
-            </additionalProjectnatures>
-          </configuration>
-        </plugin>
-        <plugin>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <configuration>
-            <source>1.6</source>
-            <target>1.6</target>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
+		<!-- Hive -->
+		<dependency>
+			<groupId>org.apache.hive</groupId>
+			<artifactId>hive-serde</artifactId>
+			<version>0.9.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.hive</groupId>
+			<artifactId>hive-exec</artifactId>
+			<version>0.9.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.jdo</groupId>
+			<artifactId>jdo2-api</artifactId>
+			<version>2.2</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<finalName>hive-geoip</finalName>
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.1</version>
+				<configuration>
+					<finalName>${project.name}-${project.version}</finalName>
+				</configuration>
+			</plugin>
+			
+		</plugins>
+	</build>
+
 </project>
