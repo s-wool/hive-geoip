@@ -67,6 +67,7 @@ public class GenericUDFGeoIP extends GenericUDF {
   private static final String REGION       = "REGION";
   private static final String ORG          = "ORG";
   private static final String ID           = "ID";
+  private static final String ISP          = "ISP";
 
   private static final Set<String> COUNTRY_PROPERTIES =
 	  new CopyOnWriteArraySet<String>(Arrays.asList(
@@ -184,6 +185,8 @@ public class GenericUDFGeoIP extends GenericUDF {
       return ipString != null ? ls.getOrg(ipString) : ls.getOrg(ipLong);
     } else if (this.property.equals(ID)) {
       return ipString != null ? ls.getID(ipString) : ls.getID(ipLong);
+    } else if (this.property.equals(ISP)) {
+      return ipString != null ? ls.getOrg(ipString) : ls.getOrg(ipLong);
     }
 
     return null;
