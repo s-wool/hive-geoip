@@ -162,9 +162,9 @@
 		
 		<!-- GeoIP -->
 		<dependency>
-			<groupId>com.maxmind</groupId>
-			<artifactId>maxmind-geoip</artifactId>
-			<version>1.2.5</version>
+			<groupId>com.maxmind.geoip</groupId>
+			<artifactId>geoip-api</artifactId>
+			<version>1.2.14</version>
 		</dependency>
 
 		<!-- Hive -->
